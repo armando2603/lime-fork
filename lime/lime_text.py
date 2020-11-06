@@ -467,16 +467,28 @@ class LimeTextExplainer(object):
         def distance_fn(x):
             return sklearn.metrics.pairwise.pairwise_distances(
                 x, x[0], metric=distance_metric).ravel() * 100
-
         doc_size = indexed_string.num_words()
         sample = self.random_state.randint(1, doc_size + 1, num_samples - 1)
         data = np.ones((num_samples, doc_size))
-        data[0] = np.ones(doc_size)
         features_range = range(doc_size)
+
+        fixeds = []
+        for i in range(doc_size):
+            if indexed_string.word(i) == 'Title':
+                fixeds.append(i)
+            if indexed_string.word(i) == 'Description':
+                fixeds.append(i)
+            if indexed_string.word(i) == 'Characteristics':
+                fixeds.append(i)
+
         inverse_data = [indexed_string.raw_string()]
         for i, size in enumerate(sample, start=1):
-            inactive = self.random_state.choice(features_range, size,
-                                                replace=False)
+            inactive = list(self.random_state.choice(features_range, size,
+                                                replace=False))
+
+            for fixed in fixeds:
+                if fixed in inactive:
+                    inactive.remove(fixed)
             data[i, inactive] = 0
             inverse_data.append(indexed_string.inverse_removing(inactive))
         labels = classifier_fn(inverse_data)
