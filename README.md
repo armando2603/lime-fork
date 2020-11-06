@@ -1,1 +1,1 @@
-This is a fork of the [lime project] (https://github.com/marcotcr/lime) 
+This is a fork of the lime project: https://github.com/marcotcr/lime 
